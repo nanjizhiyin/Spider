@@ -1,6 +1,9 @@
-# coding=utf-8
-import sys
+#encoding=utf-8
+
+import sys  # 要重新载入sys。因为 Python 初始化后会删除 sys.setdefaultencoding 这个方 法
+stdi, stdo, stde = sys.stdin, sys.stdout, sys.stderr
 reload(sys)
+sys.stdin, sys.stdout, sys.stderr = stdi, stdo, stde
 sys.setdefaultencoding('utf8')
 from bs4 import BeautifulSoup
 import urllib
@@ -32,7 +35,7 @@ def getUrlHtml(url, recursion):
     pageurls = soup.find_all("a", href=True)
     for links in pageurls:
         href = links.get("href")
-        print "原始地址:"+href
+        print ("原始地址:"+href)
         # 判断条件,href中好多不是url地址
         if checkUrl(href):
             print '此地址可以使用'
@@ -47,12 +50,16 @@ def installHtml(url, html, content):
         print '此地址已经存在'
         return
     # 保存源码
+    tmpHtml = html.encode('utf-8')
     sql = "INSERT INTO spider_html(url,html) VALUES(%s,%s)"
-    cursor.execute(sql, (url, html.encode('utf-8')))
+    cursor.execute(sql, (url, tmpHtml))
+    
     # 保存去掉标签的源码
-    sql = "INSERT INTO spider_content(url,content) VALUES(%s,%s)"
-    tmpStr = content.encode('utf-8')
-    cursor.execute(sql, (url, tmpStr))
+    tmpStr = '此地址已经存在'  # content.encode('utf - 8')
+    # sql = "INSERT INTO spider_content(url,content) VALUES(%s,%s)"
+    sql = "INSERT INTO spider_content(url,content) VALUES('" + \
+        url + "','" + tmpStr + "')"
+    cursor.execute(sql)
 
     connect.commit()
     print '此地址已保存'
@@ -136,11 +143,13 @@ if __name__ == '__main__':
         user='root',
         passwd='root',
         db='xpfirst',
+        charset='utf8'
     )
 
     cursor = connect.cursor()
     initTable()
 
+    print ("开始了")
     # 获取网页内容
     url = "https://www.hao123.com/"  # 这里是需要获取的网页
     getUrlHtml(url, 1)

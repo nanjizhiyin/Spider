@@ -1,6 +1,8 @@
-# coding=utf-8
+#encoding=utf-8
 import sys
+stdi, stdo, stde = sys.stdin, sys.stdout, sys.stderr
 reload(sys)
+sys.stdin, sys.stdout, sys.stderr = stdi, stdo, stde
 sys.setdefaultencoding('utf8')
 
 import MySQLdb
@@ -14,6 +16,7 @@ connect = MySQLdb.connect(
     user='root',
     passwd='root',
     db='xpfirst',
+    charset='utf8'
 )
 
 cursor = connect.cursor()
@@ -25,23 +28,23 @@ app = web.application(urls, globals())  # 绑定url
 class hello:
     def GET(self):
 
-        mHtml = '<html><meta charset="UTF - 8">'
+        mHtml = '<html><meta charset="UTF-8">'
         mHtml += '<title>PyWeb</title >'
         mHtml += '<style>div{background-color:darkgrey;}</style>'
-        mHtml +'<body>'
+        mHtml += '<body>'
 
         # # 读取数据
         sql = "SELECT content FROM spider_content"
         count = cursor.execute(sql)
-        print '总共有 %s 条记录', count
+        print '总共有 %i 条记录', count
         print "获取所有结果:"
         #重置游标位置，0,为偏移量，mode＝absolute | relative,默认为relative,
         cursor.scroll(0, mode='absolute')
         #获取所有结果
         results = cursor.fetchall()
         for row in results:
-            print row
             content = row[0]
+            print content
             mHtml += '<div>'+content+'</div><br />'
 
         mHtml += "</body></html>"
