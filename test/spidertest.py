@@ -11,24 +11,14 @@ import urllib2
 
 def removeLabel(html):
     #先过滤CDATA
-    re_cdata = re.compile('//<!\[CDATA\[[^>]*//\]\]>', re.I)  # 匹配CDATA
-    re_script = re.compile(
-        '(?i)(<SCRIPT)[\\s\\S]*?((</SCRIPT>)|(/>))', re.I)  # Script
-    re_style = re.compile(
-        '(?i)(<style)[\\s\\S]*?((</style>)|(/>))', re.I)  # style
-    re_br = re.compile('<br\s*?/?>')  # 处理换行
-    re_h = re.compile('</?\w+[^>]*>')  # HTML标签
+
     re_comment = re.compile('<!--[^>]*-->')  # HTML注释
-    s = re_cdata.sub('', html)  # 去掉CDATA
-    s = re_script.sub('', s)  # 去掉SCRIPT
-    s = re_style.sub('', s)  # 去掉style
-    s = re_br.sub('\n', s)  # 将br转换为换行
-    s = re_h.sub('', s)  # 去掉HTML 标签
-    s = re_comment.sub('', s)  # 去掉HTML注释
-    #去掉多余的空行
-    blank_line = re.compile('\n+')
-    s = blank_line.sub('\n', s)
-    return s
+
+    html = re_comment.sub('', html)  # 去掉HTML注释
+
+
+
+    return html
 
 def checkCode():
     #可根据需要，选择不同的数据 
@@ -39,4 +29,8 @@ def checkCode():
 
 if __name__ == '__main__':
 
-    checkCode()
+    # checkCode()
+
+    html = '<!--[if lt IE 9] >34253453535354<![endif]--> ASDFASDFASDFASDF'
+    html= removeLabel(html)
+    print(html)
