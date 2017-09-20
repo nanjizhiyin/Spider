@@ -33,8 +33,7 @@ def getUrlHtml(forNum):
     if count == 0:
         print '没有搜索到结果,说明所有网站都抓取完了'
         return
-    #重置游标位置，0,为偏移量，mode＝absolute | relative,默认为relative,
-    cursor.scroll(0, mode='absolute')
+    
     #获取所有结果
     results = cursor.fetchall()
     for row in results:
