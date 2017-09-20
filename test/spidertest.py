@@ -12,6 +12,7 @@ import re
 import datetime
 import chardet
 import jieba
+from urlparse import urlparse
 
 
 def removeLabel(html):
@@ -96,10 +97,15 @@ def chineseFen():
     print(", ".join(seg_list))
     
 if __name__ == '__main__':
+    url = 'http://www.baidu.com/home/jsfsfasd'
 
+    r = urlparse(url)
+    print r
+    print r.scheme +'://'+ r.netloc
+  
 
     # readTxt()
     # checkCode()
     # getCharset()
-    chineseFen()
+    # chineseFen()
   

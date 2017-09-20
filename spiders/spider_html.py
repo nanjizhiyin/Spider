@@ -27,7 +27,7 @@ def getUrlHtml(forNum):
     print '=========> 正在进行第 %i 轮' % forNum
 
     # 读取数据
-    sql = "SELECT url FROM spider_url WHERE htmlStatus = 0 LIMIT 10 "
+    sql = "SELECT url FROM spider_url WHERE status = 0 LIMIT 10 "
     count = cursor.execute(sql)
     print '总共有 %i 条记录'% count
     if count == 0:
@@ -124,7 +124,7 @@ def installHtml(url, html):
     try:
         print("===========>保存成功了,更新状态...")
         # 保存成功了,更新状态
-        sql = "UPDATE spider_url SET htmlStatus = 1,encoding='%s',errormsg='%s' WHERE url = '%s' " % (
+        sql = "UPDATE spider_url SET status = 1,encoding='%s',errormsg='%s' WHERE url = '%s' " % (
             encoding, errormsg, url)
         cursor.execute(sql)
     except Exception as err:
@@ -137,7 +137,8 @@ def installHtml(url, html):
 
 def updateUrlErrorMsg(url,errormsg):
     # 保存成功了,更新状态
-    sql = "UPDATE spider_url SET htmlStatus = 2,errormsg='%s' WHERE url = '%s' " % (errormsg, url)
+    sql = "UPDATE spider_url SET status = 2,errormsg='%s' WHERE url = '%s' " % (
+        errormsg, url)
     cursor.execute(sql)
     connect.commit()
     

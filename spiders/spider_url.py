@@ -11,6 +11,7 @@ import MySQLdb
 import os
 import re
 import datetime
+from urlparse import urlparse
 
 # 数据库
 cursor = None
@@ -25,7 +26,11 @@ def getUrlHtml(urls, forNum):
         newUrl = []
         # 下载源码
         print ("下载地址:" + url)
-        html = urllib2.urlopen(url, timeout=30).read()
+        try:
+            html = urllib2.urlopen(url, timeout=30).read()
+        except Exception as err:
+            print("===========>下载失败:%s" % (err))
+            continue
         # 解析器
         soup = BeautifulSoup(html, "lxml")
         # 所有的A标签
@@ -44,19 +49,36 @@ def getUrlHtml(urls, forNum):
 
 # 保存html源码
 
+
 def installUrl(url):
+    # 当前时间
+    tmpdatetime = datetime.datetime.now()
     # 查询url是否已经存在
     sql = "SELECT urlID FROM spider_url WHERE url = '" + url + "'"
     count = cursor.execute(sql)
     if count > 0:
         # 如果已经存在请返回
-        print '已经存在:' + url
+        print '=============>已经存在:' + url
         return
-    # 当前时间
-    tmpdatetime = datetime.datetime.now()
     # 保存URL
+    print '=============>保存url:' + url
     sql = "INSERT INTO spider_url(url,createDate) VALUES(%s,%s)"
     cursor.execute(sql, (url, tmpdatetime))
+
+  
+    # 保存DOMAIN
+    # urlp = urlparse(url)
+    # domain = urlp.scheme + '://' + urlp.netloc
+    # # 查询domain是否已经存在
+    # sql = "SELECT domainID FROM spider_domain WHERE domain = '" + domain + "'"
+    # count = cursor.execute(sql)
+    # if count == 0:
+    #     # 不存在
+    #     print '=============>保存domain:' + domain
+    #     sql = "INSERT INTO spider_domain(domain,createDate) VALUES(%s,%s)"
+    #     cursor.execute(sql, (domain, tmpdatetime))
+
+
     connect.commit()
     print '保存成功:' + url
 
@@ -72,7 +94,36 @@ def checkUrl(href):
     return True
 
 
+def checkDomain(domainID):
+    # 读取数据
+    sql = "SELECT domainID,domain FROM spider_domain"
+    sql += ' WHERE domainID > %d' % (domainID)
+    sql += ' LIMIT 10'
 
+    count = cursor.execute(sql)
+    print '总共有 %i 条记录' % (count)
+    #获取所有结果
+    results = cursor.fetchall()
+    if len(results) == 0:
+        print "没有更多数据了"
+        return
+    
+    urls=[]
+    for row in results:
+        domainID = row[0]
+        domain = row[1]
+        print domainID
+        print 'domain=' + domain
+        urls.append(domain)
+    getUrlHtml(urls, 6)
+  
+    print("===========>更新状态...")
+    # 保存成功了,更新状态
+    sql = "UPDATE spider_domain SET status = 1 WHERE domainID = %d " % (domainID)
+    cursor.execute(sql)
+    connect.commit()
+    # 递归读取数据
+    checkDomain(domainID)
 
 if __name__ == '__main__':
 
@@ -89,6 +140,9 @@ if __name__ == '__main__':
     cursor = connect.cursor()
 
     print ("开始了")
-    # 获取网页内容
-    urls = ["https://www.hao123.com/"]  # 这里是需要获取的网页
-    getUrlHtml(urls, 6)
+    # # 获取网页内容
+    # urls = ["https://www.hao123.com/"]  # 这里是需要获取的网页
+    # getUrlHtml(urls, 6)
+
+    checkDomain(0)
+

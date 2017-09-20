@@ -10,8 +10,11 @@ connect = None
 # 初始化数据表
 def initTable():
     #创建数据表
+    # 保存域名地址
+    sql = "CREATE TABLE if not exists spider_domain(domainID int auto_increment primary key ,domain Text NOT NULL COMMENT '网址',status INT(1) DEFAULT 0 COMMENT '0:未开始,1:分析网页中所有的url地址成功 2:失败',createDate datetime) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='url地址'"
+    cursor.execute(sql)
     # 保存url地址
-    sql = "CREATE TABLE if not exists spider_url(urlID int auto_increment primary key ,url Text NOT NULL COMMENT '网址',encoding VARCHAR(30),errormsg Text COMMENT '错误日志',htmlStatus INT(1) DEFAULT 0 COMMENT '1:保存到content成功 2:http下载失败',createDate datetime) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='url地址'"
+    sql = "CREATE TABLE if not exists spider_url(urlID int auto_increment primary key ,url Text NOT NULL COMMENT '网址',encoding VARCHAR(30),errormsg Text COMMENT '错误日志',status INT(1) DEFAULT 0 COMMENT '0:未开始,1:保存到content成功 2:http下载失败',createDate datetime) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='url地址'"
     cursor.execute(sql)
     # 保存网页源码
     sql = "CREATE TABLE if not exists spider_html(htmlID int auto_increment primary key ,url Text NOT NULL COMMENT '网址',html LongText COMMENT 'html源码',createDate datetime) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='html源码'"
