@@ -11,6 +11,7 @@ import os
 import re
 import datetime
 import chardet
+import jieba
 
 
 def removeLabel(html):
@@ -64,26 +65,41 @@ def readTxt():
 
     f.close()
 
-if __name__ == '__main__':
-
-    # readTxt()
-    # checkCode()
-
+# 获取网页的编码
+def getCharset():
     html = '<meta http - equiv = "Content-Type" content = "text/html; charset=utf-8" /> < meta name = "publishid" content = "1167041.0.1002.0" / >'
+    html = '<meta charset=utf-8><title>百度数据开放平台</title><script type=text/javascript> < meta name = "publishid" content = "1167041.0.1002.0" / >'
+    html = '<meta charset = "utf-8"/>adfasdfasdf'
+    html = '<meta charset = "utf-8" ><meta http - equiv = "X-UA-Compatible" content = "IE=edge,chrome=1" >'
+
     # html= removeLabel(html)
     # print(html)
 
-    hrefs = re.findall(r'charset=([^"]*)', html, re.I | re.M)  # 去掉HTML注释
+    hrefs = re.findall(
+        r'<meta.*charset[\s]*=[\s]*"?([^"/>]*)', html, re.I | re.M)  # 去掉HTML注释
+
     for line in hrefs:
         print line
-    # # 解析器
-    # soup = BeautifulSoup(html, "lxml")
-    # # 所有的A标签
-    # pageurls = soup.find_all("meta")
-    # for links in pageurls:
-    #     href = links.get("content")
-    #     print href
-    #     hrefs = re.findall(r'charset=(.*)', href, re.I | re.M)  # 去掉HTML注释
-    #     for line in hrefs:
-    #         print line  
+    
+# 中文分词
+def chineseFen():
+    seg_list = jieba.cut("我来到北京清华大学", cut_all=True)
+    print("Full Mode: " + "/ ".join(seg_list))  # 全模式
 
+    seg_list = jieba.cut("我来到北京清华大学", cut_all=False)
+    print("Default Mode: " + "/ ".join(seg_list))  # 精确模式
+
+    seg_list = jieba.cut("他来到了网易杭研大厦")  # 默认是精确模式
+    print(", ".join(seg_list))
+
+    seg_list = jieba.cut_for_search("小明硕士毕业于中国科学院计算所，后在日本京都大学深造")  # 搜索引擎模式
+    print(", ".join(seg_list))
+    
+if __name__ == '__main__':
+
+
+    # readTxt()
+    # checkCode()
+    # getCharset()
+    chineseFen()
+  

@@ -48,16 +48,13 @@ def getUrlHtml(forNum):
             html = urllib2.urlopen(url, timeout=30).read()
         except Exception as err:
             print("===========>下载失败:%s" % (err))
+            updateUrlErrorMsg(url, errormsg)
             continue
 
         print("===========>下载结束!开始操作SQL")
-        htmlLen = len(html)
-        if htmlLen > 0:
-            print "源码长度:%d" % (htmlLen)
-            # 保存源码
-            installHtml(url, html)
-        else:
-            updateUrlErrorMsg(url, errormsg)
+        print "源码长度:%d" % (len(html))
+        # 保存源码
+        installHtml(url, html)
 
     # 下一轮
     print("===========>下一轮")
@@ -75,7 +72,8 @@ def installHtml(url, html):
     # 判断编码格式
     print("===========>读取编码格式......")
     encoding = None
-    charsets = re.findall(r'charset=([^"]*)', html, re.I | re.M)  # 去掉HTML注释
+    charsets = re.findall(
+        r'<meta.*charset[\s]*=[\s]*"?([^"/>]*)', html, re.I | re.M)  # 去掉HTML注释
     if len(charsets) > 0:
         encoding = charsets[0]
         print "===========>编码1:%s" % (encoding)
@@ -88,7 +86,7 @@ def installHtml(url, html):
         if encoding != 'utf-8':
             try:
                 print("===========>转码....")
-                if encoding == 'gb2312':
+                if encoding == 'gb2312' or encoding == 'gbk':
                     html = html.decode('gb18030').encode("utf-8")
                 else:
                     html = html.decode(encoding).encode("utf-8")
