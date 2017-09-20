@@ -47,18 +47,17 @@ def getUrlHtml(forNum):
         try:
             html = urllib2.urlopen(url, timeout=30).read()
         except Exception as err:
-            print("===========>下载失败!")
-            print(err)
-            errormsg = '%s' % (err)
-        finally:
-            print("===========>下载结束!开始操作SQL")
-            htmlLen = len(html)
-            if htmlLen > 0:
-                print "源码长度:%d" % (htmlLen)
-                # 保存源码
-                installHtml(url, html)
-            else:
-                updateUrlErrorMsg(url, errormsg)
+            print("===========>下载失败:%s" % (err))
+            continue
+
+        print("===========>下载结束!开始操作SQL")
+        htmlLen = len(html)
+        if htmlLen > 0:
+            print "源码长度:%d" % (htmlLen)
+            # 保存源码
+            installHtml(url, html)
+        else:
+            updateUrlErrorMsg(url, errormsg)
 
     # 下一轮
     print("===========>下一轮")
@@ -75,9 +74,15 @@ def installHtml(url, html):
     tmpdatetime = datetime.datetime.now()
     # 判断编码格式
     print("===========>读取编码格式......")
-    tmpDic = chardet.detect(html)
-    encoding = tmpDic["encoding"]
-    print "===========>编码:%s" % (encoding)
+    encoding = None
+    charsets = re.findall(r'charset=([^"]*)', html, re.I | re.M)  # 去掉HTML注释
+    if len(charsets) > 0:
+        encoding = charsets[0]
+        print "===========>编码1:%s" % (encoding)
+    else:
+        tmpDic = chardet.detect(html)
+        encoding = tmpDic["encoding"]
+        print "===========>编码2:%s" % (encoding)
     if encoding != None:
         encoding = encoding.lower()
         if encoding != 'utf-8':
@@ -94,23 +99,38 @@ def installHtml(url, html):
             finally:
                 print("===========>解码完成!")
 
+    # html = html.decode('windows-1254', errors='replace')
     # 删除html标签
     content = removeLabel(html)
     # 处理源码,去掉特殊符号
     html = removeHtmlSpe(html)
     errormsg = removeHtmlSpe(errormsg)
-    # 保存源码
-    sql = "INSERT INTO spider_html(url,html,createDate) VALUES(%s,%s,%s)"
-    cursor.execute(sql, (url, html, tmpdatetime))
 
-    # 保存去掉标签的源码
-    # tmpStr = '此地址已经存在'
-    sql = "INSERT INTO spider_content(url,content,createDate) VALUES(%s,%s,%s)"
-    cursor.execute(sql, (url, content, tmpdatetime))
+    try:
+        print("===========>保存源码...")
+        # 保存源码
+        sql = "INSERT INTO spider_html(url,html,createDate) VALUES(%s,%s,%s)"
+        cursor.execute(sql, (url, html, tmpdatetime))
+    except Exception as err:
+        print("===========>错误:%s" % (err))
 
-    # 保存成功了,更新状态
-    sql = "UPDATE spider_url SET htmlStatus = 1,encoding='%s',errormsg='%s' WHERE url = '%s' " % (encoding, errormsg,url)
-    cursor.execute(sql)
+    try:
+        print("===========>保存去掉标签的源码...")
+        # 保存去掉标签的源码
+        # tmpStr = '此地址已经存在'
+        sql = "INSERT INTO spider_content(url,content,createDate) VALUES(%s,%s,%s)"
+        cursor.execute(sql, (url, content, tmpdatetime))
+    except Exception as err:
+        print("===========>错误:%s" % (err))
+
+    try:
+        print("===========>保存成功了,更新状态...")
+        # 保存成功了,更新状态
+        sql = "UPDATE spider_url SET htmlStatus = 1,encoding='%s',errormsg='%s' WHERE url = '%s' " % (
+            encoding, errormsg, url)
+        cursor.execute(sql)
+    except Exception as err:
+        print("===========>错误:%s" % (err))
 
     connect.commit()
     print '===========>源码已保存'
