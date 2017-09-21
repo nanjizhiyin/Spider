@@ -70,14 +70,15 @@ def readTxt():
 def getCharset():
     html = '<meta http - equiv = "Content-Type" content = "text/html; charset=utf-8" /> < meta name = "publishid" content = "1167041.0.1002.0" / >'
     html = '<meta charset=utf-8><title>百度数据开放平台</title><script type=text/javascript> < meta name = "publishid" content = "1167041.0.1002.0" / >'
-    html = '<meta charset = "utf-8"/>adfasdfasdf'
-    html = '<meta charset = "utf-8" ><meta http - equiv = "X-UA-Compatible" content = "IE=edge,chrome=1" >'
+    # html = '<meta charset = "utf-8"/>adfasdfasdf'
+    # html = '<meta charset = "utf-8" ><meta http - equiv = "X-UA-Compatible" content = "IE=edge,chrome=1" >'
+    # html = "<meta charset = 'utf-8' ><meta sss='32323'>"
 
     # html= removeLabel(html)
     # print(html)
 
     hrefs = re.findall(
-        r'<meta.*charset[\s]*=[\s]*"?([^"/>]*)', html, re.I | re.M)  # 去掉HTML注释
+        r'<meta.*charset[\s]*=[\s]*["\']?([^"\'/>]*)', html, re.I | re.M)  # 去掉HTML注释
 
     for line in hrefs:
         print line
@@ -97,15 +98,11 @@ def chineseFen():
     print(", ".join(seg_list))
     
 if __name__ == '__main__':
-    url = 'http://www.baidu.com/home/jsfsfasd'
 
-    r = urlparse(url)
-    print r
-    print r.scheme +'://'+ r.netloc
   
 
     # readTxt()
     # checkCode()
-    # getCharset()
+    getCharset()
     # chineseFen()
   

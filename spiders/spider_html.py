@@ -72,7 +72,7 @@ def installHtml(url, html):
     print("===========>读取编码格式......")
     encoding = None
     charsets = re.findall(
-        r'<meta.*charset[\s]*=[\s]*"?([^"/>]*)', html, re.I | re.M)  # 去掉HTML注释
+        r'<meta.*charset[\s]*=[\s]*["\']?([^"\'/>]*)', html, re.I | re.M)  # 去掉HTML注释
     if len(charsets) > 0:
         encoding = charsets[0]
         print "===========>编码1:%s" % (encoding)
