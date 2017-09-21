@@ -43,7 +43,7 @@ def getUrlHtml(urls, forNum):
                 # 保存到数据库
                 installUrl(href)
                 # 添加到新数组,进入下一个循环
-                newUrl.insert(len(newUrl), href)
+                newUrl.append(href)
         if forNum > 0 and len(newUrl) > 0:
           getUrlHtml(newUrl, forNum - 1)
 

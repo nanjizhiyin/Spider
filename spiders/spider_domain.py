@@ -99,6 +99,6 @@ if __name__ == '__main__':
 
     print ("开始了")
     # # 获取网页内容
-    urls = ["https://www.hao123.com/"]  # 这里是需要获取的网页
+    urls = ['https://www.hao123.com/', 'http://www.265.com/']  # 这里是需要获取的网页
     getUrlHtml(urls)
 

@@ -99,10 +99,15 @@ def chineseFen():
     
 if __name__ == '__main__':
 
-  
+    key = 'baidu'
+    content = "Baidu asdfasfas"
+    rpStr = '<em class="em">' + key + '</em>'
+    reg = re.compile(re.escape(key), re.IGNORECASE)
+    content = reg.sub(rpStr, content)
+    print content
 
     # readTxt()
     # checkCode()
-    getCharset()
+    # getCharset()
     # chineseFen()
   
