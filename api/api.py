@@ -4,7 +4,7 @@ stdi, stdo, stde = sys.stdin, sys.stdout, sys.stderr
 reload(sys)
 sys.stdin, sys.stdout, sys.stderr = stdi, stdo, stde
 sys.setdefaultencoding('utf8')
-
+import json
 import MySQLdb
 import web
 import jieba
@@ -21,6 +21,7 @@ class search:
     def GET(self):
         parameter = web.input()
         # 搜索关键字
+        # wd是url的参数
         word = parameter.wd
 
         keys = []
@@ -29,11 +30,6 @@ class search:
             keys.append(key)
         searchWord = " ".join(seg_list)
         print('searchWord='+searchWord)
-
-        mHtml = '<html><meta charset="UTF-8">'
-        mHtml += '<title>搜索结果</title >'
-        mHtml += '<style> .url{color: blue} .em{color: red} .content{} </style>'
-        mHtml += '<body>'
 
         # 读取数据
         sql = "SELECT url,content,MATCH(content) AGAINST('%s') AS score FROM spider_content ORDER BY score desc" % (
@@ -47,22 +43,16 @@ class search:
         cursor.scroll(0, mode='absolute')
         #获取所有结果
         results = cursor.fetchall()
-        for row in results:
-            url = row[0]
-            content = row[1]
-            print content
-            for key in keys:
-                rpStr = '<em class="em">' + key + '</em>'
-                reg = re.compile(re.escape(key), re.IGNORECASE)
-                content = reg.sub(rpStr, content)
-                
-            mHtml += '<div>'
-            mHtml += '<a class="url" href="' + url + '">' + url + '</a>'
-            mHtml += '<div class="content">' + content + '</div>'
-            mHtml += '</div><br />'
 
-        mHtml += "</body></html>"
-        return mHtml
+        tmpJson = []
+   
+        for row in results:
+            user = {}
+            user['url'] = row[0]
+            user['content'] = row[1]
+            tmpJson.append(user)
+
+        return json.dumps(tmpJson)
 
 if __name__ == "__main__":
 
@@ -81,8 +71,8 @@ if __name__ == "__main__":
     # 指定任何url都指向content类
     urls = ("/s", "search")
     app = web.application(urls, globals())  # 绑定url
-    web.httpserver.runsimple(app.wsgifunc(), ('127.0.0.1', 8889))
+    web.httpserver.runsimple(app.wsgifunc(), ('127.0.0.1', 8890))
     app.run()
-    # python search.py
-    # 域名地址: http://127.0.0.1:8889/
-    # 搜索: http://127.0.0.1:8889/s?wd=声明
+    # python api.py
+    # 域名地址: http://127.0.0.1:8890/
+    # 搜索: http://127.0.0.1:8890/s?wd=声明
