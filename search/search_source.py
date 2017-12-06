@@ -100,7 +100,7 @@ if __name__ == "__main__":
     # 指定任何url都指向content类
     urls = ("/html", "html", "/content", "content")
     app = web.application(urls, globals())  # 绑定url
-    web.httpserver.runsimple(app.wsgifunc(), ('127.0.0.1', 8889))
+    web.httpserver.runsimple(app.wsgifunc(), ('127.0.0.1', 8888))
     app.run()
     # python index.py
-    # 域名地址: http: // 0.0.0.0: 8080/
+    # 域名地址: http: // 0.0.0.0: 8888/

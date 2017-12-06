@@ -13,3 +13,13 @@
 1.cd search
 2.python search.py
 3.打开浏览器输入http://127.0.0.1:8889/s?wd=声明.就是在搜索'声明'两个字的所有网页
+
+#查看数据库
+1.cd search
+2.python search_source.py
+3.打开浏览器输入http://127.0.0.1:8888/html?contentID=1 查看第一条去掉标签的源码记录
+3.打开浏览器输入http://127.0.0.1:8888/html?htmlID=1 查看第一条网页源码记录
+
+
+#API给外部提供搜索接口,并返回json数据
+
