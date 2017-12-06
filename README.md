@@ -10,16 +10,28 @@
 
 
 #搜索功能
-1.cd search
+1.cd search/python
 2.python search.py
 3.打开浏览器输入http://127.0.0.1:8889/s?wd=声明.就是在搜索'声明'两个字的所有网页
+4.此代码是自己连接数据库,没有使用API
 
 #查看数据库
-1.cd search
+1.cd search/python
 2.python search_source.py
 3.打开浏览器输入http://127.0.0.1:8888/html?contentID=1 查看第一条去掉标签的源码记录
 3.打开浏览器输入http://127.0.0.1:8888/html?htmlID=1 查看第一条网页源码记录
 
 
 #API给外部提供搜索接口,并返回json数据
+1.cd api
+2.python api.py
+3.打开浏览器输入http://127.0.0.1:8890/s?wd=声明.返回所有相关的json内容
+
+#前端和后端分离结构
+#后端使用python的api提供数据,前端使用vue和react框架实现
+
+#vue实现,代码在search/vue下面,执行下面的命令,启动项目
+$ cd vue
+$ npm install
+$ npm run dev
 
