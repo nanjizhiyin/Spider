@@ -10,9 +10,17 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Welcome to React</h1>
         </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+  
+        <input id="wd" class="wd" ref="wd" placeholder="搜索关键字" />
+        <button id="searchBt" class="searchBt">搜索</button>
+        <div class='itemList'>
+          <div class="item" v-for="item in itemList">
+            <a class="url"> "url" </a>
+            <div class="content">"content"</div>
+          </div>
+        </div>
+        <div class="error">"error"</div>
+
       </div>
     );
   }
