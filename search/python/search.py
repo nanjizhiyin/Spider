@@ -22,6 +22,7 @@ class search:
         parameter = web.input()
         # 搜索关键字
         word = parameter.wd
+        print('word=' + word)
 
         keys = []
         seg_list = jieba.cut_for_search(word)  # 搜索引擎模式

@@ -11,6 +11,7 @@
         <div v-else class="content">{{ item.content}}</div>
       </div>
     </div>
+    <!-- 返回错误时显示 -->
     <div class="error">{{error}}</div>
   </div>
 </template>
