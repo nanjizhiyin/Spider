@@ -31,7 +31,6 @@
 #后端使用python的api提供数据,前端使用vue和react框架实现
 
 #vue实现,代码在search/vue下面,执行下面的命令,启动项目
-$ cd vue
-$ npm install
+$ cd search/vue
 $ npm run dev
 

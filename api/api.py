@@ -17,8 +17,10 @@ cursor = None
 app = None
 
 # 定义相应类
+
 class search:
     def GET(self):
+        web.header("Access-Control-Allow-Origin", "*")
         parameter = web.input()
         # 搜索关键字
         # wd是url的参数
